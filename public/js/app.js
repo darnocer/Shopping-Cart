@@ -1,3 +1,5 @@
+const cartContent = document.querySelectorAll(".cart-content");
+
 // main cart
 let cart = [];
 // buttons
@@ -30,10 +32,7 @@ class Products {
 // display products
 class UI {
   displayProducts(products) {
-    console.log(products);
-
     let result = "";
-
     products.forEach((product) => {
       result += `
         <!--------------------single product----------------------->
@@ -76,7 +75,6 @@ class UI {
           event.target.disabled = true;
           // returns product object from products based on the id with an additional amount proparty utilizing spread operator
           let cartItem = { ...Storage.getProduct(id), amount: 1 };
-          console.log(cartItem);
           // add product to cart
           cart = [...cart, cartItem];
           // save cart items in local storage
@@ -106,6 +104,7 @@ class UI {
   }
 
   addCartItem(item) {
+    // create cart item div and appent to the cart
     const div = $("<div>").addClass("cart-item");
     div.html(`<img src="${item.image}" alt="product">
     <div>
@@ -123,13 +122,18 @@ class UI {
   }
 
   showCart() {
+    // adds the overlay to the background
     $(".cart-overlay").addClass("transparentBcg");
+    // transforms the cart to show it
     $(".cart").addClass("showCart");
   }
   setupAPP() {
+    // sets up cart from values in local storage
     cart = Storage.getCart();
     this.setCartValues(cart);
     this.populateCart(cart);
+
+    //shows and hides cart
     $(".cart-btn").click((event) => {
       this.showCart();
     });
@@ -138,7 +142,7 @@ class UI {
     });
   }
 
-  // takes argument of cart array
+  // takes argument of cart array; for every object in the array, add the cart item
   populateCart(cart) {
     cart.forEach((item) => this.addCartItem(item));
   }
@@ -148,20 +152,43 @@ class UI {
     $(".cart").removeClass("showCart");
   }
 
+  // functionality within the cart
   cartLogic() {
     // clear cart button
     $(".clear-cart").click((event) => {
       this.clearCart();
     });
+    // removing items
   }
 
   clearCart() {
+    // grab the ids of all of the items in the cart
     let cartItems = cart.map((item) => item.id);
+    // remove each item from the cart based on its id
     cartItems.forEach((id) => this.removeItem(id));
+    // while there are any children (cart items)
+    while ($(".cart-content").children().length > 0) {
+      // clear all children
+      $(".cart-content").empty();
+    }
+    this.hideCart();
   }
 
   removeItem(id) {
+    // find all of the items in the cart to not remove
     cart = cart.filter((item) => item.id !== id);
+    // set new cart values and save new cart to local storag
+    this.setCartValues(cart);
+    Storage.saveCart(cart);
+    // update the buttons from "in cart" back to "add to cart" and re-enable
+    let button = this.getSingleButton(id);
+    button.disabled = false;
+    button.innerHTML = `<i class="fas fa-shopping-cart"></i>add to cart`;
+  }
+
+  getSingleButton(id) {
+    // find add to cart buttons for remove items
+    return buttonsDOM.find((button) => button.dataset.id === id);
   }
 }
 
