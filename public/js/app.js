@@ -1,4 +1,4 @@
-const cartContent = document.querySelectorAll(".cart-content");
+// const cartContent = document.getElementsByClassName(".cart-content");
 
 // main cart
 let cart = [];
@@ -42,7 +42,7 @@ class UI {
                 class="product-img" alt="product">
                 <button class="bag-btn" data-id=${product.id}>
                     <i class="fas fa-shopping-cart"></i>
-                    Add to Bag
+                    Add to Cart
                 </button>
             </div>
             <h3>${product.title}</h3>
@@ -51,7 +51,6 @@ class UI {
         <!--------------------end single product----------------------->`;
     });
 
-    // * why didn't this work with productsDOM?
     $(".products-center").html(result);
   }
 
@@ -114,7 +113,7 @@ class UI {
     </div>
     <div>
         <i class="fas fa-chevron-up" data-id=${item.id}></i>
-        <p class="item-amount">${item.id}</p>
+        <p class="item-amount">1</p>
         <i class="fas fa-chevron-down" data-id=${item.id}></i>
     </div>
     `);
@@ -158,7 +157,56 @@ class UI {
     $(".clear-cart").click((event) => {
       this.clearCart();
     });
-    // removing items
+    // item updating functionality
+    $(".cart-content").click((event) => {
+      // removing items - event listener on "remove" link
+      if (event.target.classList.contains("remove-item")) {
+        // grabs the element of the remove link
+        let removeItem = event.target;
+        // remove the "cart-item" two parents up from target "remove link"; remove that child from the cart content DOM
+        document
+          .querySelector(".cart-content")
+          .removeChild(removeItem.parentElement.parentElement);
+        // grab the id of the item from the clicked remove link
+        let id = removeItem.dataset.id;
+        // pass the id to remove item
+        this.removeItem(id);
+        //if the up button is clicked
+      } else if (event.target.classList.contains("fa-chevron-up")) {
+        let addAmount = event.target;
+        let id = addAmount.dataset.id;
+        // find the item in the cart with the corresponding id
+        let tempItem = cart.find((item) => item.id === id);
+        // add one to the amount for that item
+        tempItem.amount = tempItem.amount + 1;
+        // save new amount for item in local storage
+        Storage.saveCart(cart);
+        // update cart values
+        this.setCartValues(cart);
+        // update "amount" text
+        addAmount.nextElementSibling.innerText = tempItem.amount;
+        //if the down button is clicked
+      } else if (event.target.classList.contains("fa-chevron-down")) {
+        let lowerAmount = event.target;
+        let id = lowerAmount.dataset.id;
+        // find the item in the cart with the corresponding id
+        let tempItem = cart.find((item) => item.id === id);
+        // subtract one to the amount for that item
+        tempItem.amount = tempItem.amount - 1;
+        // update values and save new cart if 1 or more items
+        if (tempItem.amount > 0) {
+          Storage.saveCart(cart);
+          this.setCartValues(cart);
+          lowerAmount.previousElementSibling.innerText = tempItem.amount;
+          // if 0 or less items, remove the item entirely
+        } else {
+          document
+            .querySelector(".cart-content")
+            .removeChild(lowerAmount.parentElement.parentElement);
+          this.removeItem(id);
+        }
+      }
+    });
   }
 
   clearCart() {
