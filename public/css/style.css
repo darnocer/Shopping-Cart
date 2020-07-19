@@ -1,10 +1,8 @@
-@import url("https://fonts.googleapis.com/css?family=Lato:400,700");
-
 :root {
-  --primaryColor: #f09d51;
+  --primaryColor: #055b31;
   --mainWhite: #fff;
   --mainBlack: #222;
-  --mainGrey: #ececec;
+  --mainGrey: #e2d7bd;
   --mainSpacing: 0.1rem;
   --mainTransition: all 0.3s linear;
 }
@@ -16,13 +14,21 @@
 body {
   color: var(--mainBlack);
   background: var(--mainWhite);
-  font-family: "Lato", sans-serif;
+  font-family: "Montserrat", sans-serif;
+}
+h1 {
+  font-size: 50px;
+}
+
+i {
+  position: relative;
+  top: 5px;
 }
 /* --------------- Navbar ---------------- */
 .navbar {
   position: sticky;
   top: 0;
-  height: 60px;
+  height: 100px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -34,9 +40,15 @@ body {
   max-width: 1170px;
   margin: 0 auto;
   display: flex;
+  text-align: center;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
+}
+
+.navbar-brand {
+  font-size: 2.5rem;
+  font-family: "Permanent Marker", cursive;
 }
 .nav-icon {
   font-size: 1.5rem;
@@ -81,7 +93,7 @@ body {
   letter-spacing: var(--mainSpacing);
   font-size: 1rem;
   background: var(--primaryColor);
-  color: var(--mainBlack);
+  color: var(--mainWhite);
   border: 1px solid var(--primaryColor);
   transition: var(--mainTransition);
   cursor: pointer;
